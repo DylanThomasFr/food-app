@@ -1,4 +1,4 @@
-import {View, Text} from "react-native"
+import {Text, ScrollView} from "react-native"
 import {useState} from "react"
 
 import useResults from "../hooks/useResults"
@@ -10,8 +10,14 @@ export default function SearchScreen() {
     const [searchTerm, setSearchTerm] = useState('')
     const [submitHandler, results, errorMessage] = useResults()
 
+    const filterResultsByPrice = (price) => {
+        return results.filter(result => {
+            return result.price === price
+        })
+    }
+
     return (
-        <View>
+        <>
             <SearchBar
                 searchTerm={searchTerm}
                 onTermChange={setSearchTerm}
@@ -20,12 +26,22 @@ export default function SearchScreen() {
             {
                 errorMessage ?
                     <Text>{errorMessage}</Text> :
-                    <Text>We have found {results.length} results</Text>
+                    null
             }
-            <ResultsList title="Cost effective"/>
-            <ResultsList title="Bit pricier"/>
-            <ResultsList title="Big spender"/>
-
-        </View>
+            <ScrollView>
+                <ResultsList
+                    title="Cost effective"
+                    results={filterResultsByPrice('$')}
+                />
+                <ResultsList
+                    title="Bit pricier"
+                    results={filterResultsByPrice('$$')}
+                />
+                <ResultsList
+                    title="Big spender"
+                    results={filterResultsByPrice('$$$')}
+                />
+            </ScrollView>
+        </>
     )
 }
